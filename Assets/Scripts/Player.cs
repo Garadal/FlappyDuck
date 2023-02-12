@@ -4,17 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float velocity = 2.4f;
+    public float velocity = 1.7f;
+    private PlayerSpawner spawner;
     private Rigidbody2D rigidbody;
-
-    // Awake is called when the script instance is being loaded.
-    void Awake() { 
-        
-    }
+    private Collider2D collider;
+    public bool dieOnHity;
     
-    // Start is called before the first frame update
-    void Start() {
+    void Awake() {
         rigidbody = GetComponent<Rigidbody2D>();
+        collider = GetComponent<Collider2D>();
     }
 
     // Update is called once per frame
@@ -28,19 +26,42 @@ public class Player : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision) {
         string collidedWithName = collision.collider.name;
         string collidedOtherName = collision.otherCollider.name;
+        // Debug.Log($"Collision {collidedWithName}, {collidedOtherName}");
         if (collision.gameObject.CompareTag("Obstacle")) {
-            print($"Collision {collidedWithName}, {collidedOtherName}");
-            this.PlayersDeath();
+            if(dieOnHity) {
+                playerDeath();
+            }
+            Obstacle obstacleHit = collision.gameObject.GetComponentInParent<Obstacle>();
+            if (obstacleHit != null) {
+                obstacleHit.kickBack(rigidbody);
+            }
         }
-        //if so player death
     }
 
-    void PlayersDeath() {
-        print($"Player died due collision.");
-        //turn off collision
-        //hide player
-        //reset position
-        //wait for GameManager to restart the game
+    void OnTriggerExit2D(Collider2D trigger) {
+        if (trigger.gameObject.CompareTag("SafeZone")) {
+            playerDeath();
+        }
+    }
+
+    public void setSpawner(PlayerSpawner spawner) {
+        Debug.Log("Player.setSpawner");
+        this.spawner = spawner;
+    }
+
+    public void revive() {
+        collider.enabled = true;
+        rigidbody.simulated = true;
+    }
+
+    public void kill() {
+        collider.enabled = false;
+        rigidbody.simulated = false;
+    }
+
+    public void playerDeath() {
+        kill();
+        spawner.despawnPlayer();
     }
 
 }
