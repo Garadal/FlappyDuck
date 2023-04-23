@@ -14,9 +14,9 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Backgroud1
+  - Backgroud2
+  - Backgroud3
   - 
   - 
   - 
@@ -46,6 +46,7 @@ TagManager:
     locked: 0
   - name: Buttons
     uniqueID: 1989161215
+    locked: 0
   - name: Far Background
     uniqueID: 3527324471
     locked: 0
